@@ -3,19 +3,26 @@ name: Sales Forecast MLOps Pipeline
 on:
   push:
     branches:
-      - main  # Automatically triggers on push to the main branch
+      - main
+
+# Allow GitHub Actions to commit and push changes
+permissions:
+  contents: write
 
 jobs:
   register-dataset:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install Dependencies
         run: pip install -r mlops/deployment/requirements.txt
+
       - name: Upload Dataset to Hugging Face Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -25,17 +32,21 @@ jobs:
     needs: register-dataset
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install Dependencies
         run: pip install -r mlops/deployment/requirements.txt
+
       - name: Run Data Preparation
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python mlops/model_building/prep.py
+
       - name: Upload Prepared Data
         uses: actions/upload-artifact@v4
         with:
@@ -46,24 +57,29 @@ jobs:
     needs: data-prep
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install Dependencies
         run: pip install -r mlops/deployment/requirements.txt
+
       - name: Download Prepared Data
         uses: actions/download-artifact@v4
         with:
           name: prepared-data
           path: mlops/data/
+
       - name: Run Model Training
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           mkdir -p mlruns
           python mlops/model_building/train.py
+
       - name: Upload MLflow Results
         uses: actions/upload-artifact@v4
         with:
@@ -71,17 +87,36 @@ jobs:
           path: mlruns/
 
   deploy-hosting:
-    runs-on: ubuntu-latest
     needs: [model-training, data-prep, register-dataset]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install Dependencies
         run: pip install -r mlops/deployment/requirements.txt
-      - name: Push files to Frontend Hugging Face Space
+
+      - name: Push files to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python mlops/hosting/hosting.py
+
+      # Automatically commit and push repository changes to main
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated update from MLOps pipeline"
+            git push origin main
+          fi
+
