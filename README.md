@@ -33,7 +33,7 @@ intervention after setup.
 > a true week-over-week or month-over-month time series. The app derives
 > weekly/monthly/quarterly figures by evenly dividing that total — a
 > planning convenience, clearly labeled as such, not an independent forecast
-> per period. See [Extending to True Time-Series Forecasting](#extending-to-true-time-series-forecasting).
+> per period.
 
 ## Data Description
 
@@ -167,30 +167,3 @@ finishes, the live app is at:
 https://huggingface.co/spaces/<your-hf-username>/<your-space-name>
 ```
 
-## Extending to True Time-Series Forecasting
-
-To move from "predict one total" to genuine weekly/monthly/quarterly
-forecasts:
-
-1. Add a date/period column to the raw extract (e.g., weekly sales per
-   product-store).
-2. Engineer lag and rolling-window features (last week's sales, 4-week
-   moving average) and calendar features (week-of-year, month, holiday
-   flags).
-3. Either train separate models per horizon, or use a model family built
-   for sequential data (e.g., a global gradient-boosted model with lag
-   features, or a dedicated time-series library).
-4. Backtest with a time-based (not random) train/test split, so the test
-   period always follows the training period.
-
-The rest of the pipeline — registration, MLflow tracking, Hugging Face
-model hosting, and the four CI/CD stages — carries over unchanged.
-
-## Known Notes
-
-- Repo/model/Space names are fully configurable; keep them consistent
-  (e.g. `salesforecast`, `salesforecast-model`, `salesforecast-app`) so the
-  project is easy to navigate on Hugging Face.
-- `Store_Id` is intentionally kept as a categorical feature (only 4 distinct
-  values) rather than dropped, since it captures store-specific baseline
-  performance beyond `Store_Size`/`Store_Type`/`Store_Location_City_Type`.
