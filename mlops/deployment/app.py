@@ -108,4 +108,4 @@ if submit:
 
     except Exception as e:
         st.error(f"Prediction Error: {e}")
-        st.info("Ensure the column names in app.py match your training data exactly.")
+        st.info("Ensure the column names in app.py match training data exactly.")
