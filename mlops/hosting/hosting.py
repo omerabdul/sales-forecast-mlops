@@ -30,7 +30,7 @@ def deploy():
         path_in_repo="",
     )
 
-    print(f"✅ Deployment successful! View your app at: https://huggingface.co/spaces/{REPO_ID}")
+    print(f"✅ Deployment successful! View app at: https://huggingface.co/spaces/{REPO_ID}")
 
 if __name__ == "__main__":
     deploy()
