@@ -1,0 +1,4 @@
+Sales Forecast Model Results
+Test RMSE: 283.9131
+Test MAE: 120.7289
+Test R2: 0.9294
