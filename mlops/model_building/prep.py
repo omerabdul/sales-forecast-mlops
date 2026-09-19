@@ -18,10 +18,11 @@ def prepare_data():
 
     # 2.1 Remove unnecessary columns
     print("Step 2: Performing data cleaning...")
-    # Product_Id is a near-unique identifier with no standalone predictive
-    # signal, so it is dropped. Store_Id is KEPT: it only takes ~4 distinct
-    # values here and captures store-specific baseline performance that
-    # Store_Size/Store_Type/Store_Location_City_Type don't fully explain.
+    '''
+    Product_Id is a near-unique identifier with no standalone predictive signal, so it is dropped. 
+    Store_Id is KEPT because it captures store-specific baseline performance that 
+    Store_Size/Store_Type/Store_Location_City_Type don't fully explain.
+    '''
     cols_to_drop = ['Product_Id']
     df = df.drop(columns=[col for col in cols_to_drop if col in df.columns])
 
@@ -49,10 +50,12 @@ def prepare_data():
         df['Store_Age'] = current_year - df['Store_Establishment_Year']
         df = df.drop(columns=['Store_Establishment_Year'])
 
-    # NOTE: categorical columns are intentionally NOT label-encoded here.
-    # They are left as clean strings and one-hot encoded inside the training
-    # pipeline (train.py) via ColumnTransformer, so the same fitted encoder
-    # is reused consistently at inference time in app.py.
+    '''
+    NOTE: categorical columns are intentionally NOT label-encoded here.
+    They are left as clean strings and one-hot encoded inside the training
+    pipeline (train.py) via ColumnTransformer, so the same fitted encoder
+    is reused consistently at inference time in app.py.
+    '''
 
     print("Step 3: Splitting into train and test sets...")
 
