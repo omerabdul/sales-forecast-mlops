@@ -4,7 +4,6 @@ from datetime import datetime
 import joblib
 from huggingface_hub import hf_hub_download
 
-# Ensure st.set_page_config() is the very first Streamlit command
 st.set_page_config(page_title="Sales Forecast Predictor", layout="wide")
 
 # 1. Load Model from Hub
@@ -62,9 +61,6 @@ with st.form("prediction_form"):
 
 # 3. Prediction Logic
 if submit:
-    # IMPORTANT: column names/values must match what prep.py produced during training,
-    # including the Store_Age engineered feature (Store_Establishment_Year is not
-    # passed directly into the model).
     store_age = datetime.now().year - store_est_year
 
     data = {
@@ -88,11 +84,8 @@ if submit:
         st.divider()
         st.success(f"### Predicted Total Sales Revenue: ₹{predicted_total:,.2f}")
 
-        # Business framing: the model predicts a single point-in-time sales total
-        # (there is no date/time dimension in this dataset). The figures below are
-        # a NAIVE periodization -- they assume the prediction represents an annual
-        # total and divide it evenly. They are a planning convenience, not an
-        # independent time-series forecast.
+        # The model predicts a single point-in-time sales total
+
         with st.expander("Weekly / Monthly / Quarterly breakdown (naive periodization)"):
             st.caption(
                 "This dataset has no date/time field, so these figures are an even "
