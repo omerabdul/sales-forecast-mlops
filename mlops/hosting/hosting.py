@@ -2,14 +2,14 @@ from huggingface_hub import HfApi
 import os
 
 # CONFIGURATION
-# This is the Space where the Streamlit UI will live
+# Space where the Streamlit UI will live
 REPO_ID = "flyingdragon98/superkart"
 
 DEPLOY_FOLDER = "mlops/deployment"
 
 def deploy():
     api = HfApi()
-    # 1. Ensure the Space exists (Set to Docker SDK, since we ship a custom Dockerfile)
+    # 1. Ensure the Space exists
     print(f"Checking if Space {REPO_ID} exists...")
     try:
         api.create_repo(
