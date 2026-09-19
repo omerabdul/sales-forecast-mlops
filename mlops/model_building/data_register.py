@@ -23,7 +23,7 @@ def register_data():
         print(f"An error occurred: {e}")
         return
 
-    # Step 2: Upload the folder (contains SuperKart.csv, the raw product/store sales extract)
+    # Step 2: Upload the folder (contains SuperKart.csv)
     print(f"Uploading data from {DATA_FOLDER} to Hugging Face...")
     try:
         api.upload_folder(
