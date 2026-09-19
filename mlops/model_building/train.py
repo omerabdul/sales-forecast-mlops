@@ -65,8 +65,6 @@ def train_with_grid_search():
         remainder='drop'
     )
 
-    # Note: no class-imbalance weighting here -- that concept (scale_pos_weight)
-    # is specific to classification and doesn't apply to a regression target.
     xgb_model = xgb.XGBRegressor(random_state=42, objective='reg:squarederror')
     model_pipeline = make_pipeline(preprocessor, xgb_model)
 
